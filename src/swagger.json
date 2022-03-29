@@ -1,0 +1,244 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "User Creation Test",
+    "version": "1.0.0",
+    "contact": "rodrigo.hss@outlook.com"
+  },
+  "components": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "admin": {
+          "type": "boolean",
+          "default": false
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create new user",
+        "description": "Create new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "Rodrigo",
+                  "email": "teste@teste.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "error": "Email already taken."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get" : {
+        "tags": ["User"],
+        "summary": "List all user",
+        "description": "List all user",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "header",
+            "description": "ID of user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/User"
+
+                  }
+              
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Now allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "error": "Now allowed"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "summary": "Find a specific user",
+        "description": "Find a specific user by their ID",
+        "tags": ["User"],
+        "parameters":[
+          {
+            "name": "user_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "error": "User not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "summary": "Turn admin",
+        "tags": ["User"],
+        "parameters":[
+          {
+            "name": "user_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/User"
+                    },
+                    {
+                      "properties": {
+                        "admin": {
+                          "default": true
+                        }
+                      }
+                    }
+                  ]
+                }
+
+              }
+            }
+          },
+          "400": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "error": "User not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
